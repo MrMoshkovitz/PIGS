@@ -29,7 +29,7 @@ const App = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'An error occurred while processing your request.');
+        throw new Error(errorData.detail || 'An error occurred while processing your request.');
       }
 
       const data = await response.json();
