@@ -1,0 +1,45 @@
+{
+    "prompt_options": [
+      {
+        "id": 1,
+        "prompt": "Create a detailed marketing plan for launching a new tech product aimed at millennials."
+      },
+      {
+        "id": 2,
+        "prompt": "Develop a Python script that reads data from a CSV file, processes it, and outputs the results to a new CSV file."
+      },
+      {
+        "id": 3,
+        "prompt": "Write a blog post on the benefits of mindfulness meditation, including scientific research and practical tips."
+      },
+      {
+        "id": 4,
+        "prompt": "Generate a JavaScript function that validates an email address based on standard format rules."
+      },
+      {
+        "id": 5,
+        "prompt": "Compose a speech for a high school graduation ceremony focusing on the themes of resilience and innovation."
+      },
+      {
+        "id": 6,
+        "prompt": "Design a landing page for an online course about digital marketing, focusing on user conversion."
+      },
+      {
+        "id": 7,
+        "prompt": "Write a concise guide on how to set up a secure VPN for personal use, including configuration tips."
+      },
+      {
+        "id": 8,
+        "prompt": "Create a social media content calendar for a month, tailored to a small business in the fashion industry."
+      },
+      {
+        "id": 9,
+        "prompt": "Develop a business proposal template that outlines the key elements of a successful startup pitch."
+      },
+      {
+        "id": 10,
+        "prompt": "Generate a tutorial on how to integrate a third-party API into a web application using Node.js."
+      }
+    ]
+  }
+  
