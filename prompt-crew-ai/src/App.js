@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Button } from "./components/ui/button"
 import { Textarea } from "./components/ui/textarea"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./components/ui/card"
-import { Loader2, Zap } from "lucide-react"
+import { Loader2, FileSpreadsheet } from "lucide-react"
 
 const App = () => {
-  const [prompt, setPrompt] = useState('');
+  const [request, setRequest] = useState('');
   const [result, setResult] = useState('');
-  const [analysis, setAnalysis] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -16,25 +15,23 @@ const App = () => {
     setIsLoading(true);
     setError('');
     setResult('');
-    setAnalysis('');
 
     try {
-      const response = await fetch('http://localhost:8000/optimize_prompt', {
+      const response = await fetch('http://localhost:8000/create_spreadsheet', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: prompt })
+        body: JSON.stringify({ request: request })
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'An error occurred while processing your request.');
+        throw new Error(errorData.error?.message || 'An error occurred while processing your request.');
       }
 
       const data = await response.json();
-      setResult(data.improved_prompt);
-      setAnalysis(data.analysis);
+      setResult(data.result);
     } catch (error) {
       console.error('Error:', error);
       setError(error.message);
@@ -48,34 +45,34 @@ const App = () => {
       <Card className="w-full max-w-2xl shadow-2xl bg-white bg-opacity-95 backdrop-blur-sm">
         <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-t-lg">
           <CardTitle className="text-3xl font-bold text-center flex items-center justify-center">
-            <Zap className="mr-2" /> PromptPro AI
+            <FileSpreadsheet className="mr-2" /> Excel Specialist AI
           </CardTitle>
           <CardDescription className="text-center text-gray-100">
-            Enhance your prompts with advanced AI techniques
+            Create custom spreadsheets for commercial cleaning job costing
           </CardDescription>
         </CardHeader>
         <CardContent className="mt-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <Textarea
-              placeholder="Enter your prompt here (you can write multiple lines)"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe your spreadsheet requirements here..."
+              value={request}
+              onChange={(e) => setRequest(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg min-h-[150px] focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
             <Button 
               type="submit" 
               className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-semibold py-3 rounded-lg transition duration-300 transform hover:scale-105" 
-              disabled={isLoading || !prompt.trim()}
+              disabled={isLoading || !request.trim()}
             >
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Optimizing...
+                  Creating Spreadsheet...
                 </>
               ) : (
                 <>
-                  <Zap className="mr-2 h-5 w-5" />
-                  Optimize Prompt
+                  <FileSpreadsheet className="mr-2 h-5 w-5" />
+                  Create Spreadsheet
                 </>
               )}
             </Button>
@@ -90,14 +87,8 @@ const App = () => {
           )}
           {result && (
             <div className="w-full p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
-              <p className="font-medium text-green-800">Improved Prompt:</p>
+              <p className="font-medium text-green-800">Spreadsheet Creation Result:</p>
               <p className="mt-2 text-green-700 whitespace-pre-wrap">{result}</p>
-            </div>
-          )}
-          {analysis && (
-            <div className="w-full p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-              <p className="font-medium text-blue-800">Analysis:</p>
-              <p className="mt-2 text-blue-700 whitespace-pre-wrap">{analysis}</p>
             </div>
           )}
         </CardFooter>
