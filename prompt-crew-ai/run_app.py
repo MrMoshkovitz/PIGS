@@ -27,11 +27,25 @@ def run_command(command):
         print(f"Error: Failed to run command '{command}' - {e}")
         sys.exit(1)
 
+def install_frontend_dependencies(frontend_dir):
+    """Install npm dependencies for the frontend if they are missing."""
+    change_directory(frontend_dir)
+    if not os.path.exists('node_modules'):
+        print("Frontend dependencies not found. Installing...")
+        run_command(['npm', 'install'])
+
+def install_backend_dependencies(backend_dir):
+    """Install Python dependencies for the backend if they are missing."""
+    change_directory(backend_dir)
+    if os.path.exists('requirements.txt'):
+        print("Backend dependencies found. Installing...")
+        run_command([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+
 def run_frontend():
     """Start the frontend application."""
     frontend_dir = os.path.dirname(os.path.abspath(__file__))
-    change_directory(frontend_dir)
-
+    
+    install_frontend_dependencies(frontend_dir)
     # Check platform and run appropriate command
     command = ["npm.cmd", "start"] if sys.platform == "win32" else ["npm", "start"]
     run_command(command)
@@ -43,7 +57,8 @@ def run_backend():
         print(f"Error: Backend directory not found at {backend_dir}")
         sys.exit(1)
 
-    change_directory(backend_dir)
+    
+    install_backend_dependencies(backend_dir)
     run_command([sys.executable, "main.py"])
 
 if __name__ == "__main__":
