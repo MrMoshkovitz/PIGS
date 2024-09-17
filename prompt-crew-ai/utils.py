@@ -119,10 +119,9 @@ class FrontedUtils:
             if not os.path.exists(frontend_dir):
                 raise FileNotFoundError(f"Frontend directory not found at {frontend_dir}")
             
-            FrontedUtils.install_frontend_dependencies(frontend_dir)
-            
-            # Assuming you run your frontend with npm start or similar
-            command = ["npm", "start"]
+            FrontedUtils.install_dependencies(frontend_dir)
+        
+            command = ["npm.cmd", "start"] if sys.platform == "win32" else ["npm", "start"]
             GlobalUtils.logger.info(f"Running frontend command: {' '.join(command)}")
             GlobalUtils.run_command(command)
         except FileNotFoundError as e:
@@ -164,10 +163,9 @@ class BackendUtils:
             if not os.path.exists(backend_dir):
                 raise FileNotFoundError(f"Backend directory not found at {backend_dir}")
             
-            GlobalUtils.install_backend_dependencies(backend_dir)
+            BackendUtils.install_dependencies(backend_dir)
             
-            # Assuming you run your backend with python manage.py runserver or similar
-            command = [sys.executable, "manage.py", "runserver"]
+            command = [sys.executable, "main.py"]
             GlobalUtils.logger.info(f"Running backend command: {' '.join(command)}")
             GlobalUtils.run_command(command)
         except FileNotFoundError as e:

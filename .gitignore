@@ -1,7 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-prompt-crew-ai/node_modules/*
+# Add line to ignore any path that has a child node_modules directory and ignore all files in that directory
+node_modules/
 /.pnp
 .pnp.js
 
@@ -21,5 +22,7 @@ prompt-crew-ai/node_modules/*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-/prompt-crew-ai/PIGSVenv
-prompt-crew-ai/PIGSVenv/*
+Archive/
+PIGSVenv
+
+# ../PIGS-Backend-VENV

@@ -1,0 +1,47 @@
+./
+├── README.md
+│   ├── __pycache__
+│   │   ├── # IRRELAVANT
+├── backend
+│   ├── backend_requirements.txt
+│   ├── main.py
+│   └── package-lock.json
+├── frontend
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── node_modules
+│   │   ├── # IRRELAVANT
+│   ├── public
+│   │   ├── favicon.ico
+│   │   ├── images
+│   │   │   └── background.jpg
+│   │   ├── index.html
+│   │   ├── logo192.png
+│   │   ├── logo512.png
+│   │   ├── manifest.json
+│   │   └── robots.txt
+│   ├── src
+│   │   ├── App.css
+│   │   ├── App.js
+│   │   ├── App.test.js
+│   │   ├── components
+│   │   │   └── ui
+│   │   │       ├── button.js
+│   │   │       ├── card.js
+│   │   │       ├── input.js
+│   │   │       └── textarea.jsx
+│   │   ├── index.css
+│   │   ├── index.js
+│   │   ├── logo.svg
+│   │   ├── reportWebVitals.js
+│   │   └── setupTests.js
+│   ├── tailwind.config.js
+│   └── utils
+├── logs
+├── run_app.py
+├── tree.cmd.sh
+├── tree.txt
+└── utils.py
+
+10 directories, 31 files
