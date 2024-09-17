@@ -144,7 +144,7 @@ class BackendUtils:
         GlobalUtils.change_directory(backend_dir)
         if os.path.exists('requirements.txt'):
             GlobalUtils.logger.info("Backend dependencies found. Installing...")
-            GlobalUtils.run_command([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+            GlobalUtils.run_command([sys.executable, '-m', 'pip', 'install', '-r', 'backend_requirements.txt'])
         else:
             GlobalUtils.logger.warning("No requirements.txt found in the backend directory.")
 
