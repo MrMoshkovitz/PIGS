@@ -4,23 +4,32 @@
 from utils import Utils
 from threading import Thread
 
+#* Initialize logger
+logger = Utils.initialize_logger()
 
 def main():
-    #* Initialize logger
-    logger = Utils.initialize_logger()
+    if Utils.logger is None:
+        Utils.initialize_logger()
 
     #* Start the application
     logger.info(f"Starting the application...")
+    run_app()
+    return
 
-    #* Create threads for frontend and backend
+def run_app():
+    if Utils.logger is None:
+        Utils.initialize_logger()
+    logger.info(f"Running the application...")
+    logger.info(f"Creating Fronted & Backend Thread...")
     frontend_thread = Thread(target=Utils.run_frontend)
     backend_thread = Thread(target=Utils.run_backend)
-
-    #* Start the threads
+    
+    logger.info(f"Starting Frontend & Backend Thread...")
     frontend_thread.start()
     backend_thread.start()
 
-    return
+
+
 
 if __name__ == "__main__":
     main()
