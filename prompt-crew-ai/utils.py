@@ -6,14 +6,15 @@ import traceback
 import linecache
 import sys
 import subprocess
-class Utils:
+
+class GlobalUtils:
     logger = None
     @staticmethod
     def initialize_logger(name='BackendLogger', level=logging.DEBUG, log_dir=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')):
             
         """Initialize a logger with advanced debugging capabilities."""
-        Utils.logger = logging.getLogger(name)
-        Utils.logger.setLevel(level)
+        GlobalUtils.logger = logging.getLogger(name)
+        GlobalUtils.logger.setLevel(level)
 
         # Create a console handler
         ch = logging.StreamHandler()
@@ -24,9 +25,9 @@ class Utils:
         ch.setFormatter(formatter)
 
         # Add the handler to the logger
-        Utils.logger.addHandler(ch)
+        GlobalUtils.logger.addHandler(ch)
 
-        return Utils.logger
+        return GlobalUtils.logger
 
 
     @staticmethod
@@ -51,115 +52,129 @@ class Utils:
     @staticmethod
     def change_directory(target_dir):
         """Change the working directory to the target directory."""
-        if Utils.logger is None:
-            Utils.initialize_logger()
+        if GlobalUtils.logger is None:
+            GlobalUtils.initialize_logger()
         
         logging.debug(f"Changing directory to {target_dir}")
         try:
             os.chdir(target_dir)
-            Utils.logger.info(f"Changed directory to {target_dir}")
+            GlobalUtils.logger.info(f"Changed directory to {target_dir}")
         except FileNotFoundError as e:
-            error_details = Utils.get_error_details(e)
-            Utils.logger.error(f"Directory {target_dir} not found. {error_details}")
+            error_details = GlobalUtils.get_error_details(e)
+            GlobalUtils.logger.error(f"Directory {target_dir} not found. {error_details}")
             sys.exit(1)
         except Exception as e:
-            error_details = Utils.get_error_details(e)
-            Utils.logger.error(f"Failed to change directory. {error_details}")
+            error_details = GlobalUtils.get_error_details(e)
+            GlobalUtils.logger.error(f"Failed to change directory. {error_details}")
             sys.exit(1)
                     
 
     @staticmethod
     def run_command(command):
         """Run a system command."""
-        if Utils.logger is None:
-            Utils.initialize_logger()
+        if GlobalUtils.logger is None:
+            GlobalUtils.initialize_logger()
         
         try:
             subprocess.run(command, check=True)
-            Utils.logger.info(f"Successfully ran command: {' '.join(command)}")
+            GlobalUtils.logger.info(f"Successfully ran command: {' '.join(command)}")
         except subprocess.CalledProcessError as e:
-            error_details = Utils.get_error_details(e)
-            Utils.logger.error(f"Command '{' '.join(command)}' failed. {error_details}")
+            error_details = GlobalUtils.get_error_details(e)
+            GlobalUtils.logger.error(f"Command '{' '.join(command)}' failed. {error_details}")
             sys.exit(1)
         except Exception as e:
-            error_details = Utils.get_error_details(e)
-            Utils.logger.error(f"Failed to run command '{' '.join(command)}'. {error_details}")
+            error_details = GlobalUtils.get_error_details(e)
+            GlobalUtils.logger.error(f"Failed to run command '{' '.join(command)}'. {error_details}")
             sys.exit(1)
 
+
+
+
+class FrontedUtils:
     @staticmethod
-    def install_frontend_dependencies(frontend_dir):
-        """Install npm dependencies for the frontend if they are missing."""
-        if Utils.logger is None:
-            Utils.initialize_logger()
+    def install_dependencies(frontend_dir):
+        """Install frontend dependencies if they are missing."""
+        if GlobalUtils.logger is None:
+            GlobalUtils.initialize_logger()
+        
         logging.info("Installing frontend dependencies...")
-        Utils.change_directory(frontend_dir)
-        if not os.path.exists('node_modules'):
-            Utils.logger.info("Frontend dependencies not found. Installing...")
-            Utils.run_command(['npm', 'install'])
+        GlobalUtils.change_directory(frontend_dir)
+        if os.path.exists('package.json'):
+            GlobalUtils.logger.info("Frontend dependencies found. Installing...")
+            GlobalUtils.run_command(["npm", "install"])
         else:
-            Utils.logger.info("Frontend dependencies already installed.")
-
+            GlobalUtils.logger.warning("No package.json found in the frontend directory.")
+    
     @staticmethod
-    def install_backend_dependencies(backend_dir):
-        """Install Python dependencies for the backend if they are missing."""
-        if Utils.logger is None:
-            Utils.initialize_logger()
-        logging.info("Installing backend dependencies...")
-        Utils.change_directory(backend_dir)
-        if os.path.exists('requirements.txt'):
-            Utils.logger.info("Backend dependencies found. Installing...")
-            Utils.run_command([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-        else:
-            Utils.logger.warning("No requirements.txt found in the backend directory.")
-
-    @staticmethod
-    def run_frontend():
+    def run():
         """Start the frontend application."""
-        if Utils.logger is None:
-            Utils.initialize_logger()
+        if GlobalUtils.logger is None:
+            GlobalUtils.initialize_logger()
         
         logging.info("Starting frontend application...")
         try:
-            frontend_dir = os.path.dirname(os.path.abspath(__file__))
-            Utils.logger.info(f"Starting frontend application in {frontend_dir}")
+            frontend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend")
+            GlobalUtils.logger.info(f"Starting frontend application in File: {frontend_dir}")
             
-            Utils.install_frontend_dependencies(frontend_dir)
+            if not os.path.exists(frontend_dir):
+                raise FileNotFoundError(f"Frontend directory not found at {frontend_dir}")
             
-            # Check platform and run appropriate command
-            command = ["npm.cmd", "start"] if sys.platform == "win32" else ["npm", "start"]
-            Utils.logger.info(f"Running frontend command: {' '.join(command)}")
-            Utils.run_command(command)
+            FrontedUtils.install_frontend_dependencies(frontend_dir)
+            
+            # Assuming you run your frontend with npm start or similar
+            command = ["npm", "start"]
+            GlobalUtils.logger.info(f"Running frontend command: {' '.join(command)}")
+            GlobalUtils.run_command(command)
+        except FileNotFoundError as e:
+            error_details = GlobalUtils.get_error_details(e)
+            GlobalUtils.logger.error(f"Frontend directory not found. {error_details}")
+            sys.exit(1)
         except Exception as e:
-            error_details = Utils.get_error_details(e)
-            Utils.logger.error(f"Failed to run frontend application. {error_details}")
+            error_details = GlobalUtils.get_error_details(e)
+            GlobalUtils.logger.error(f"Failed to run frontend application. {error_details}")
             sys.exit(1)
 
+
+class BackendUtils:
     @staticmethod
-    def run_backend():
+    def install_dependencies(backend_dir):
+        """Install Python dependencies for the backend if they are missing."""
+        if GlobalUtils.logger is None:
+            GlobalUtils.initialize_logger()
+        logging.info("Installing backend dependencies...")
+        GlobalUtils.change_directory(backend_dir)
+        if os.path.exists('requirements.txt'):
+            GlobalUtils.logger.info("Backend dependencies found. Installing...")
+            GlobalUtils.run_command([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+        else:
+            GlobalUtils.logger.warning("No requirements.txt found in the backend directory.")
+
+
+    @staticmethod
+    def run():
         """Start the backend application."""
-        if Utils.logger is None:
-            Utils.initialize_logger()
+        if GlobalUtils.logger is None:
+            GlobalUtils.initialize_logger()
         
         logging.info("Starting backend application...")
         try:
             backend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backend")
-            Utils.logger.info(f"Starting backend application in {backend_dir}")
+            GlobalUtils.logger.info(f"Starting backend application in File: {backend_dir}")
             
             if not os.path.exists(backend_dir):
                 raise FileNotFoundError(f"Backend directory not found at {backend_dir}")
             
-            Utils.install_backend_dependencies(backend_dir)
+            GlobalUtils.install_backend_dependencies(backend_dir)
             
             # Assuming you run your backend with python manage.py runserver or similar
             command = [sys.executable, "manage.py", "runserver"]
-            Utils.logger.info(f"Running backend command: {' '.join(command)}")
-            Utils.run_command(command)
+            GlobalUtils.logger.info(f"Running backend command: {' '.join(command)}")
+            GlobalUtils.run_command(command)
         except FileNotFoundError as e:
-            error_details = Utils.get_error_details(e)
-            Utils.logger.error(f"Backend directory not found. {error_details}")
+            error_details = GlobalUtils.get_error_details(e)
+            GlobalUtils.logger.error(f"Backend directory not found. {error_details}")
             sys.exit(1)
         except Exception as e:
-            error_details = Utils.get_error_details(e)
-            Utils.logger.error(f"Failed to run backend application. {error_details}")
+            error_details = GlobalUtils.get_error_details(e)
+            GlobalUtils.logger.error(f"Failed to run backend application. {error_details}")
             sys.exit(1)
-
