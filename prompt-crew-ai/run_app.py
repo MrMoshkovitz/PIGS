@@ -1,15 +1,15 @@
 # File: run_app.py
 
 #* Import Libraries
-from utils import Utils
+from utils import GlobalUtils, FrontedUtils, BackendUtils
 from threading import Thread
 
 #* Initialize logger
-logger = Utils.initialize_logger()
+logger = GlobalUtils.initialize_logger()
 
 def main():
-    if Utils.logger is None:
-        Utils.initialize_logger()
+    if GlobalUtils.logger is None:
+        GlobalUtils.initialize_logger()
 
     #* Start the application
     logger.info(f"Starting the application...")
@@ -17,12 +17,12 @@ def main():
     return
 
 def run_app():
-    if Utils.logger is None:
-        Utils.initialize_logger()
+    if GlobalUtils.logger is None:
+        GlobalUtils.initialize_logger()
     logger.info(f"Running the application...")
     logger.info(f"Creating Fronted & Backend Thread...")
-    frontend_thread = Thread(target=Utils.run_frontend)
-    backend_thread = Thread(target=Utils.run_backend)
+    frontend_thread = Thread(target=FrontedUtils.run)
+    backend_thread = Thread(target=BackendUtils.run)
     
     logger.info(f"Starting Frontend & Backend Thread...")
     frontend_thread.start()
