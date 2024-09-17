@@ -123,7 +123,15 @@ class FrontedUtils:
         
             command = ["npm.cmd", "start"] if sys.platform == "win32" else ["npm", "start"]
             GlobalUtils.logger.info(f"Running frontend command: {' '.join(command)}")
-            GlobalUtils.run_command(command)
+            try:
+                GlobalUtils.run_command(command)
+            except Exception as e:
+                error_details = GlobalUtils.get_error_details(e)
+                GlobalUtils.logger.debug(f"Failed to run frontend application. {error_details}")
+                GlobalUtils.logger.info("Attempting to run 'npm start' with '--legacy-peer-deps' flag...")
+                command.append("--legacy-peer-deps")
+                GlobalUtils.run_command(command)
+                # sys.exit(1)
         except FileNotFoundError as e:
             error_details = GlobalUtils.get_error_details(e)
             GlobalUtils.logger.error(f"Frontend directory not found. {error_details}")
@@ -142,7 +150,7 @@ class BackendUtils:
             GlobalUtils.initialize_logger()
         logging.info("Installing backend dependencies...")
         GlobalUtils.change_directory(backend_dir)
-        if os.path.exists('requirements.txt'):
+        if os.path.exists('backend_requirements.txt'):
             GlobalUtils.logger.info("Backend dependencies found. Installing...")
             GlobalUtils.run_command([sys.executable, '-m', 'pip', 'install', '-r', 'backend_requirements.txt'])
         else:
